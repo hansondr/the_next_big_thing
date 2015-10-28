@@ -3,7 +3,8 @@ require "spec_helper"
 module Teaser
   describe TeaseController, type: :controller do
     before do
-      controller.stub(:inject_dependencies)
+      #controller.stub(:inject_dependencies)
+      allow(controller).to receive(:inject_dependencies)
     end
 
     describe "GET new" do
@@ -16,19 +17,19 @@ module Teaser
 
     describe "POST create" do
       it "should use the annoyance meter set to 20" do
-        controller.unstub(:inject_dependencies)
-        Annoyance::Meter.should_receive(:new).with(10)
+        allow(controller).to receive(:inject_dependencies).and_call_original
+        expect(Annoyance::Meter).to receive(:new).with(10)
         xhr :post, :create, use_route: "teaser"
       end
 
       it "should fail if no new_sign_up_entry parameter is given" do
         xhr :post, :create, use_route: "teaser"
-        response.status.should == 400
-        response.body.should == "Hey! Please call this right... I need a new signUp entry!"
+        expect(response.status).to eq 400
+        expect(response.body).to eq "Hey! Please call this right... I need a new signUp entry!"
 
         xhr :post, :create, new_sign_up_entry: nil, use_route: "teaser"
-        response.status.should == 400
-        response.body.should == "Hey! Please call this right... I need a new signUp entry!"
+        expect(response.status).to eq 400
+        expect(response.body).to eq "Hey! Please call this right... I need a new signUp entry!"
       end
 
       it "should fail if the given new_sign_up_entry already exists (and use the annoyance meter)" do
@@ -42,9 +43,9 @@ module Teaser
         controller.instance_variable_set "@event_counter", event_counter
 
         xhr :post, :create, new_sign_up_entry: "adam", use_route: "teaser"
-        response.status.should == 400
-        response.body.should == "Oh I am annoyed..."
-        EventCounter::Logger::Count.first.count.should == 2
+        expect(response.status).to eq 400
+        expect(response.body).to eq "Oh I am annoyed..."
+        expect(EventCounter::Logger::Count.first.count).to eq 2
       end
 
       it "should fail if the new entry cannot be saved" do
@@ -52,8 +53,8 @@ module Teaser
         controller.instance_variable_set "@entry_manager", entry_manager
 
         xhr :post, :create, new_sign_up_entry: "something unsaveable", use_route: "teaser"
-        response.status.should == 500
-        response.body.should == "Hm... something went seriously wrong."
+        expect(response.status).to eq 500
+        expect(response.body).to eq "Hm... something went seriously wrong."
       end
 
       it "should be a success if the new entry can be saved" do
@@ -61,8 +62,8 @@ module Teaser
         controller.instance_variable_set "@entry_manager", entry_manager
 
         xhr :post, :create, new_sign_up_entry: "something unsaveable", use_route: "teaser"
-        response.status.should == 200
-        response.body.should == "Thanks for signing up!"
+        expect(response.status).to eq 200
+        expect(response.body).to eq "Thanks for signing up!"
       end
     end
   end

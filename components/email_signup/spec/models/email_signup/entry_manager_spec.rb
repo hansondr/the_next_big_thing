@@ -5,7 +5,7 @@ module EmailSignup
     before do
       Entry.delete_all
     end
-    
+
     describe "#create" do
       it "creates an entry" do
         expect {
@@ -16,7 +16,7 @@ module EmailSignup
       it "does not create an entry with the same email address twice" do
         subject.create "some_email@example.com"
         expect {
-          subject.create("some_email@example.com").should == nil
+          expect(subject.create("some_email@example.com")).to be_nil
         }.to_not change(Entry, :count)
       end
     end
@@ -27,8 +27,8 @@ module EmailSignup
       end
 
       it "returns an entry iff the correct email is used" do
-        subject.find_by_email("some_email@example.com").should == @entry
-        subject.find_by_email("some_other_email@example.com").should == nil
+        expect(subject.find_by_email("some_email@example.com")).to eq @entry
+        expect(subject.find_by_email("some_other_email@example.com")).to eq nil
       end
     end
   end

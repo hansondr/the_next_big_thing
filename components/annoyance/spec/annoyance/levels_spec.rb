@@ -4,10 +4,9 @@ module Annoyance
   describe Annoyance do
     describe ".levels" do
       it "should be an array of strings" do
-        Annoyance::Levels.levels.should be_an Array
-        Annoyance::Levels.levels.select {|level| level.is_a? String }.count.should == Annoyance::Levels.levels.count
+        expect(Annoyance::Levels.levels).to be_an Array
+        expect(Annoyance::Levels.levels.select { |level| level.is_a? String }.count).to eq Annoyance::Levels.levels.count
       end
     end
   end
 end
-
