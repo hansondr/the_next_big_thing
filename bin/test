@@ -18,7 +18,7 @@ class TestRunner
 
     unless tests_passing
       puts "\n\e[91mBuild Failed\e[0m\n"
-      return -1
+      exit -1
     end
 
     puts "\n\e[32mBuild Successful\e[0m\n"
@@ -29,7 +29,7 @@ class TestRunner
   def self.run_tests(path)
     Dir.chdir path do
       puts "\n\e[33mRunning specs for #{File.basename path}\e[0m"
-      system 'RAILS_ENV=test bundle check || RAILS_ENV=test bundle install --jobs=3 --retry=3 | grep Installing'
+      system 'RAILS_ENV=test bundle install --jobs=3 --retry=3 | grep Installing'
       if database_present_in(path)
         system 'bundle exec rake db:drop'
         system 'bundle exec rake environment db:create db:migrate'
