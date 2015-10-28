@@ -9,6 +9,5 @@ script:
 before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  - cd $(dirname $BUNDLE_GEMFILE)
 rvm:
   - 2.1.0
