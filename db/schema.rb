@@ -11,13 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130403220851) do
-
-  create_table "email_signup_entries", force: true do |t|
-    t.string   "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+ActiveRecord::Schema.define(version: 20130403021547) do
 
   create_table "event_counter_counts", force: true do |t|
     t.string  "object_identifier"

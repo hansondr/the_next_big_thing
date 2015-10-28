@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+require 'pathname'
+
+class TestRunner
+  APP_ROOT = Pathname.new File.expand_path('../../', __FILE__)
+  COMPONENT_DIR = Pathname.new File.expand_path('components', APP_ROOT)
+
+  def self.run
+    tests_passing = true
+    testable_components = Dir.glob("#{COMPONENT_DIR}/*").
+                              reject { |dir| ! Dir.exists? "#{dir}/spec" }.
+                              push(APP_ROOT)
+
+    testable_components.each do |component_path|
+      test_result = run_tests(component_path)
+      tests_passing &&= test_result
+    end
+
+    unless tests_passing
+      puts "\n\e[91mBuild Failed\e[0m\n"
+      return -1
+    end
+
+    puts "\n\e[32mBuild Successful\e[0m\n"
+  end
+
+  private
+
+  def self.run_tests(path)
+    Dir.chdir path do
+      puts "\n\e[33mRunning specs for #{File.basename path}\e[0m"
+      system 'bundle install --jobs=3 --retry=3 | grep Installing'
+      system 'bundle exec rake db:drop'
+      system 'bundle exec rake environment db:create db:migrate'
+      system 'RAILS_ENV=test bundle exec rake environment db:create db:migrate'
+      system 'bundle exec rspec spec'
+    end
+  end
+end
+
+TestRunner.run
